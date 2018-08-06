@@ -1036,6 +1036,7 @@ libmesos_no_3rdparty_la_SOURCES +=					\
   master/detector/detector.cpp						\
   master/detector/standalone.cpp					\
   master/detector/zookeeper.cpp						\
+  master/resources/network_bandwidth.cpp							\
   messages/messages.cpp							\
   module/manager.cpp							\
   oci/spec.cpp								\
@@ -2503,6 +2504,7 @@ mesos_tests_SOURCES =						\
   tests/master_contender_detector_tests.cpp			\
   tests/master_maintenance_tests.cpp				\
   tests/master_quota_tests.cpp					\
+  tests/master_resources_network_bandwidth_tests.cpp				\
   tests/master_slave_reconciliation_tests.cpp			\
   tests/master_tests.cpp					\
   tests/master_validation_tests.cpp				\
