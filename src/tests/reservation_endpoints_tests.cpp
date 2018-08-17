@@ -1626,13 +1626,15 @@ TEST_F(ReservationEndpointsTest, AgentStateEndpointResources)
             "cpus": 2.0,
             "disk": 0.0,
             "gpus": 0.0,
-            "mem": 512.0
+            "mem": 512.0,
+            "network_bandwidth": 0.0
           },
           "role1": {
             "cpus": 1.0,
             "disk": 1024.0,
             "gpus": 0.0,
-            "mem": 512.0
+            "mem": 512.0,
+            "network_bandwidth": 0.0
           }
         })~").get();
 
@@ -1647,7 +1649,8 @@ TEST_F(ReservationEndpointsTest, AgentStateEndpointResources)
             "cpus": 2.0,
             "disk": 0.0,
             "gpus": 0.0,
-            "mem": 512.0
+            "mem": 512.0,
+            "network_bandwidth": 0.0
           }
         })~").get();
 
@@ -1662,6 +1665,7 @@ TEST_F(ReservationEndpointsTest, AgentStateEndpointResources)
           "disk": 3072.0,
           "gpus": 0.0,
           "mem": 1536.0,
+          "network_bandwidth": 0.0,
           "ports": "[31000-32000]"
         })~").get();
 
@@ -1676,7 +1680,8 @@ TEST_F(ReservationEndpointsTest, AgentStateEndpointResources)
           "cpus": 2.1,
           "disk": 0.0,
           "gpus": 0.0,
-          "mem": 1056.0
+          "mem": 1056.0,
+          "network_bandwidth": 0.0
         })~").get();
 
     EXPECT_EQ(expected, state.values["unreserved_resources_allocated"]);
