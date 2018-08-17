@@ -112,6 +112,9 @@ struct BoundedRateLimiter;
 struct Framework;
 struct Role;
 
+Try<Nothing> enforceNetworkBandwidthAllocation(
+      const Resources& slaveTotalResources,
+        TaskInfo& task);
 
 struct Slave
 {
