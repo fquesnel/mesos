@@ -4123,10 +4123,13 @@ void Master::accept(
               task.mutable_health_check()->set_type(HealthCheck::HTTP);
             }
           }
-          Try<Nothing> result = resources::enforceNetworkBandwidthAllocation(
-            slave->totalResources, task);
-          if(result.isError()) {
-            LOG(WARNING) << result.error();
+
+          if (flags.network_bandwidth_enforcement) {
+            Try<Nothing> result = resources::enforceNetworkBandwidthAllocation(
+              slave->totalResources, task);
+            if(result.isError()) {
+              LOG(WARNING) << result.error();
+            }
           }
         }
 
@@ -4145,10 +4148,12 @@ void Master::accept(
           if (!task.has_executor()) {
             task.mutable_executor()->CopyFrom(executor);
           }
-          Try<Nothing> result = resources::enforceNetworkBandwidthAllocation(
-            slave->totalResources, task);
-          if(result.isError()) {
-            LOG(WARNING) << result.error();
+          if (flags.network_bandwidth_enforcement) {
+            Try<Nothing> result = resources::enforceNetworkBandwidthAllocation(
+              slave->totalResources, task);
+            if(result.isError()) {
+              LOG(WARNING) << result.error();
+            }
           }
         }
 
