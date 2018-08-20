@@ -677,4 +677,9 @@ mesos::internal::master::Flags::Flags()
         }
         return None();
       });
+
+  add(&Flags::enable_network_bandwidth_enforcement,
+      "network_bandwidth_enforcement",
+      "Boolean enabling the network bandwidth enforcement\n",
+      false);
 }
