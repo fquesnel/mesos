@@ -3987,6 +3987,10 @@ void Master::accept(
     return;
   }
 
+  CHECK_SOME(slaveId);
+  Slave* slave = slaves.registered.get(slaveId.get());
+  CHECK_NOTNULL(slave);
+
   // Validate and upgrade all of the resources in `accept.operations`.
   //
   // If a RESERVE, UNRESERVE, CREATE, or DESTROY operation
@@ -4001,7 +4005,20 @@ void Master::accept(
     accept.clear_operations();
 
     foreach (Offer::Operation& operation, operations) {
-      Option<Error> error = validateAndNormalizeResources(&operation);
+      Option<Error> error;
+      if(flags.network_bandwidth_enforcement) {
+        error = resources::enforceNetworkBandwidthAllocation(
+              slave->totalResources, operation);
+        if(error.isSome()) {
+          LOG(WARNING) << "[NETWORK BANDWIDTH]:" <<
+                          error.get().message;
+        }
+      }
+
+      if(error.isNone()) {
+         error = validateAndNormalizeResources(&operation);
+      }
+
       if (error.isSome()) {
         // We send TASK_ERROR status updates for tasks in an invalid LAUNCH
         // and LAUNCH_GROUP operations. Note that we don't need to recover
@@ -4066,10 +4083,6 @@ void Master::accept(
     }
   }
 
-  CHECK_SOME(slaveId);
-  Slave* slave = slaves.registered.get(slaveId.get());
-  CHECK_NOTNULL(slave);
-
   // We make various adjustments to the `Offer::Operation`s,
   // typically for backward/forward compatibility.
   // TODO(mpark): Pull this out to a master normalization utility.
@@ -4123,14 +4136,6 @@ void Master::accept(
               task.mutable_health_check()->set_type(HealthCheck::HTTP);
             }
           }
-
-          if (flags.network_bandwidth_enforcement) {
-            Try<Nothing> result = resources::enforceNetworkBandwidthAllocation(
-              slave->totalResources, task);
-            if(result.isError()) {
-              LOG(WARNING) << result.error();
-            }
-          }
         }
 
         break;
@@ -4147,13 +4152,6 @@ void Master::accept(
         foreach (TaskInfo& task, *taskGroup->mutable_tasks()) {
           if (!task.has_executor()) {
             task.mutable_executor()->CopyFrom(executor);
-          }
-          if (flags.network_bandwidth_enforcement) {
-            Try<Nothing> result = resources::enforceNetworkBandwidthAllocation(
-              slave->totalResources, task);
-            if(result.isError()) {
-              LOG(WARNING) << result.error();
-            }
           }
         }
 

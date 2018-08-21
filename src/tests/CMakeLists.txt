@@ -24,6 +24,7 @@ set(TEST_HELPER_SRC
   active_user_test_helper.cpp
   flags.cpp
   http_server_test_helper.cpp
+  network_bandwidth_helper.cpp
   resources_utils.cpp
   test_helper_main.cpp
   utils.cpp
@@ -62,6 +63,7 @@ set(MESOS_TESTS_UTILS_SRC
   mock_registrar.cpp
   mock_slave.cpp
   module.cpp
+  network_bandwidth_helper.cpp
   resources_utils.cpp
   utils.cpp
   containerizer/launcher.cpp

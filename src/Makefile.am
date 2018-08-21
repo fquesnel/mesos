@@ -1191,6 +1191,7 @@ libmesos_no_3rdparty_la_SOURCES +=					\
   tests/mock_slave.hpp							\
   tests/mock_registrar.hpp						\
   tests/module.hpp							\
+  tests/network_bandwidth_helper.hpp					\
   tests/resources_utils.hpp						\
   tests/script.hpp							\
   tests/utils.hpp							\
@@ -2165,6 +2166,7 @@ test_helper_SOURCES =						\
   tests/flags.cpp						\
   tests/http_server_test_helper.cpp				\
   tests/kill_policy_test_helper.cpp				\
+  tests/network_bandwidth_helper.cpp				\
   tests/resources_utils.cpp					\
   tests/test_helper_main.cpp					\
   tests/utils.cpp						\
@@ -2363,6 +2365,7 @@ mesos_tests_SOURCES =						\
   tests/mock_registrar.cpp					\
   tests/module.cpp						\
   tests/module_tests.cpp					\
+  tests/network_bandwidth_helper.cpp				\
   tests/oversubscription_tests.cpp				\
   tests/partition_tests.cpp					\
   tests/paths_tests.cpp						\
