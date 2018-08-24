@@ -116,6 +116,7 @@
             <td class="text-right">GPUs</td>
             <td class="text-right">Mem</td>
             <td class="text-right">Disk</td>
+            <td class="text-right">Network</td>
           </tr>
         </thead>
         <tbody>
@@ -125,6 +126,7 @@
             <td class="text-right">{{total_gpus | decimalFloat}}</td>
             <td class="text-right">{{total_mem * (1024 * 1024) | dataSize}}</td>
             <td class="text-right">{{total_disk * (1024 * 1024) | dataSize}}</td>
+            <td class="text-right">{{total_network_bandwidth | bandwidth}}</td>
           </tr>
           <tr>
             <td>Allocated</td>
@@ -132,6 +134,7 @@
             <td class="text-right">{{used_gpus | decimalFloat}}</td>
             <td class="text-right">{{used_mem * (1024 * 1024) | dataSize}}</td>
             <td class="text-right">{{used_disk * (1024 * 1024) | dataSize}}</td>
+            <td class="text-right">{{used_network_bandwidth | bandwidth}}</td>
           </tr>
           <tr>
             <td>Offered</td>
@@ -139,6 +142,7 @@
             <td class="text-right">{{offered_gpus | decimalFloat}}</td>
             <td class="text-right">{{offered_mem * (1024 * 1024) | dataSize}}</td>
             <td class="text-right">{{offered_disk * (1024 * 1024) | dataSize}}</td>
+            <td class="text-right">{{offered_network_bandwidth | bandwidth}}</td>
           </tr>
           <tr>
             <td>Idle</td>
@@ -146,6 +150,7 @@
             <td class="text-right">{{idle_gpus | decimalFloat}}</td>
             <td class="text-right">{{idle_mem * (1024 * 1024) | dataSize}}</td>
             <td class="text-right">{{idle_disk * (1024 * 1024) | dataSize}}</td>
+            <td class="text-right">{{idle_network_bandwidth | bandwidth}}</td>
           </tr>
         </tbody>
       </table>

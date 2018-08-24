@@ -18,6 +18,7 @@
       <th data-key="resources.gpus">GPUs (Allocated / Quota)</th>
       <th data-key="resources.mem">Mem (Allocated / Quota)</th>
       <th data-key="resources.disk">Disk (Allocated / Quota)</th>
+      <th data-key="resources.network_bandwidth">Network (Allocated / Quota)</th>
     </tr>
   </thead>
   <tbody>
@@ -29,6 +30,7 @@
       <td>{{role.resources.gpus | decimalFloat}} / {{(role.quota.guarantee.gpus || 0) | decimalFloat}}</td>
       <td>{{role.resources.mem * (1024 * 1024) | dataSize}} / {{(role.quota.guarantee.mem || 0) * (1024 * 1024) | dataSize}}</td>
       <td>{{role.resources.disk * (1024 * 1024) | dataSize}} / {{(role.quota.guarantee.disk || 0) * (1024 * 1024) | dataSize}}</td>
+      <td>{{role.resources.network_bandwidth | bandwidth}} / {{(role.quota.guarantee.network_bandwidth || 0) | bandwidth}}</td>
     </tr>
   </tbody>
 </table>
