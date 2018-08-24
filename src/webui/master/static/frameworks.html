@@ -20,6 +20,7 @@
       <th data-key="used_resources.gpus">GPUs</th>
       <th data-key="used_resources.mem">Mem</th>
       <th data-key="used_resources.disk">Disk</th>
+      <th data-key="used_resources.network_bandwidth">Network</th>
       <th data-key="max_share">Max Share</th>
       <th data-key="registered_time">Registered</th>
       <th data-key="reregistered_time">Re-Registered</th>
@@ -55,6 +56,7 @@
       <td>{{framework.used_resources.gpus | number}}</td>
       <td>{{framework.used_resources.mem * (1024 * 1024) | dataSize}}</td>
       <td>{{framework.used_resources.disk * (1024 * 1024) | dataSize}}</td>
+      <td>{{framework.used_resources.network_bandwidth | bandwidth}}</td>
       <td>{{framework.max_share * 100 | number}}%</td>
       <td>
         <m-timestamp value="{{framework.registered_time * 1000}}"></m-timestamp>
@@ -82,6 +84,7 @@
     <th data-key="used_resources.gpus">GPUs</th>
     <th data-key="used_resources.mem">Mem</th>
     <th data-key="used_resources.disk">Disk</th>
+    <th data-key="used_resources.network_bandwidth">Network</th>
     <th data-key="max_share">Max Share</th>
     <th data-key="registered_time">Registered</th>
     <th data-key="reregistered_time">Re-Registered</th>
@@ -117,6 +120,7 @@
     <td>{{framework.used_resources.gpus | number}}</td>
     <td>{{framework.used_resources.mem * (1024 * 1024) | dataSize}}</td>
     <td>{{framework.used_resources.disk * (1024 * 1024) | dataSize}}</td>
+    <td>{{framework.used_resources.network_bandwidth | bandwidth}}</td>
     <td>{{framework.max_share * 100 | number}}%</td>
     <td>
       <m-timestamp value="{{framework.registered_time * 1000}}"></m-timestamp>
