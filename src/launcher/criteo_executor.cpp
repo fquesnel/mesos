@@ -53,6 +53,8 @@
 #include "internal/devolve.hpp"
 #include "internal/evolve.hpp"
 
+#include "launcher/criteo_helpers.hpp"
+
 #include "logging/logging.hpp"
 
 using mesos::executor::Call;
@@ -611,6 +613,7 @@ protected:
     foreach (const TaskInfo& task, taskGroup.tasks()) {
       const TaskStatus status = createTaskStatus(task.task_id(), TASK_RUNNING);
       forward(status);
+      criteo::consul::registerTask(task);
     }
 
     auto taskIds = [&taskGroup]() {
@@ -837,6 +840,7 @@ protected:
     forward(taskStatus);
 
     CHECK(containers.contains(taskId));
+    criteo::consul::deregisterTask(containers.get(taskId).get()->taskInfo);
     containers.erase(taskId);
 
     LOG(INFO)
@@ -1103,6 +1107,8 @@ protected:
       const TaskID& taskId,
       const Option<KillPolicy>& killPolicy = None())
   {
+    criteo::consul::deregisterTask(containers.get(taskId).get()->taskInfo);
+
     if (shuttingDown) {
       LOG(WARNING) << "Ignoring kill for task '" << taskId
                    << "' since the executor is shutting down";
