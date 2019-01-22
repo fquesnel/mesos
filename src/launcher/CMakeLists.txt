@@ -26,6 +26,11 @@ set(EXECUTOR_EXECUTABLE_SRC
   executor.cpp
   )
 
+set(CRITEO_EXECUTOR_EXECUTABLE_SRC
+  ${CRITEO_EXECUTOR_EXECUTABLE_SRC}
+  criteo_executor.cpp
+  )
+
 # THE MESOS LAUNCHER FETCHER SOURCE.
 ####################################
 set(FETCHER_EXECUTABLE_SRC fetcher.cpp)
@@ -34,6 +39,7 @@ set(FETCHER_EXECUTABLE_SRC fetcher.cpp)
 ################################################
 add_executable(${DEFAULT_EXECUTOR_TARGET} ${DEFAULT_EXECUTOR_SRC})
 add_executable(${MESOS_EXECUTOR} ${EXECUTOR_EXECUTABLE_SRC})
+add_executable(${CRITEO_EXECUTOR_TARGET} ${CRITEO_EXECUTOR_EXECUTABLE_SRC})
 
 if (NOT WIN32)
   add_executable(${MESOS_FETCHER} ${FETCHER_EXECUTABLE_SRC})
@@ -43,6 +49,7 @@ endif ()
 ######################################################
 target_link_libraries(${DEFAULT_EXECUTOR_TARGET} ${MESOS_LIBS_TARGET})
 target_link_libraries(${MESOS_EXECUTOR} ${MESOS_LIBS_TARGET})
+target_link_libraries(${CRITEO_EXECUTOR_TARGET} ${MESOS_LIBS_TARGET})
 
 if (NOT WIN32)
   target_link_libraries(${MESOS_FETCHER} ${MESOS_LIBS_TARGET})
@@ -54,10 +61,12 @@ add_dependencies(
   ${MESOS_TARGET}
   ${DEFAULT_EXECUTOR_TARGET}
   ${MESOS_EXECUTOR}
+  ${CRITEO_EXECUTOR_TARGET}
   )
 
 add_dependencies(${DEFAULT_EXECUTOR_TARGET} ${MESOS_LIBS_TARGET})
 add_dependencies(${MESOS_EXECUTOR}          ${MESOS_LIBS_TARGET})
+add_dependencies(${CRITEO_EXECUTOR_TARGET}  ${MESOS_LIBS_TARGET})
 
 if (NOT WIN32)
   add_dependencies(${MESOS_TARGET} ${MESOS_FETCHER})
