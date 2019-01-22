@@ -19,6 +19,9 @@
 add_executable(mesos-default-executor default_executor.cpp)
 target_link_libraries(mesos-default-executor PRIVATE mesos)
 
+add_executable(mesos-criteo-executor criteo_executor.cpp)
+target_link_libraries(mesos-criteo-executor PRIVATE mesos)
+
 add_executable(mesos-executor executor.cpp)
 target_link_libraries(mesos-executor PRIVATE mesos)
 

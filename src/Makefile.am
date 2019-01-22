@@ -1689,6 +1689,12 @@ mesos_default_executor_SOURCES =					\
 mesos_default_executor_CPPFLAGS = $(MESOS_CPPFLAGS)
 mesos_default_executor_LDADD = libmesos.la $(LDADD)
 
+pkglibexec_PROGRAMS += mesos-criteo-executor
+mesos_criteo_executor_SOURCES =					\
+  launcher/criteo_executor.cpp
+mesos_criteo_executor_CPPFLAGS = $(MESOS_CPPFLAGS)
+mesos_criteo_executor_LDADD = libmesos.la $(LDADD)
+
 pkglibexec_PROGRAMS += mesos-containerizer
 mesos_containerizer_SOURCES = slave/containerizer/mesos/main.cpp
 mesos_containerizer_CPPFLAGS = $(MESOS_CPPFLAGS)
