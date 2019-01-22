@@ -129,7 +129,7 @@ public:
       const string& _sandboxDirectory,
       const string& _launcherDirectory,
       const Option<string>& _authorizationHeader)
-    : ProcessBase(process::ID::generate("default-executor")),
+    : ProcessBase(process::ID::generate("criteo-executor")),
       state(DISCONNECTED),
       contentType(ContentType::PROTOBUF),
       launched(false),
