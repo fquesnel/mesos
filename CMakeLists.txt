@@ -127,7 +127,7 @@ option(CPACK_BINARY_TGZ          "Enable to build TGZ packages"             OFF)
 option(CPACK_BINARY_TXZ          "Enable to build TXZ packages"             OFF)
 
 # Output a gzip'd tarball for the `package_source` target.
-set(CPACK_SOURCE_TGZ ON)
+set(CPACK_SOURCE_TGZ OFF)
 
 # By default, other forms of source packages are disabled.
 option(CPACK_SOURCE_TBZ2 "Enable to build TBZ2 source packages" OFF)
