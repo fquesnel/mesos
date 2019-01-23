@@ -20,6 +20,7 @@ set(TEST_HELPER_SRC
   active_user_test_helper.cpp
   flags.cpp
   http_server_test_helper.cpp
+  network_bandwidth_helper.cpp
   resources_utils.cpp
   test_helper_main.cpp
   utils.cpp)
@@ -54,6 +55,7 @@ set(MESOS_TESTS_UTILS_SRC
   mock_registrar.cpp
   mock_slave.cpp
   module.cpp
+  network_bandwidth_helper.cpp
   resources_utils.cpp
   utils.cpp
   containerizer/launcher.cpp)
@@ -103,6 +105,8 @@ set(MESOS_TESTS_SRC
   http_authentication_tests.cpp
   http_fault_tolerance_tests.cpp
   master_maintenance_tests.cpp
+  master_network_bandwidth_scheduling_tests.cpp
+  master_resources_network_bandwidth_tests.cpp
   master_slave_reconciliation_tests.cpp
   operation_reconciliation_tests.cpp
   operation_status_update_manager_tests.cpp
