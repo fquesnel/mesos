@@ -134,8 +134,6 @@ Option<string> getConsulToken(const string& /*username*/)
 
 Option<string> registerTask(const TaskInfo& task)
 {
-  LOG(INFO) << "TaskInfo " << stringify(task);
-
   Option<string> consulToken = getConsulToken(task.command().user());
   if (consulToken.isNone()) {
     LOG(ERROR) << "Cannot register task in consul as the token for "
