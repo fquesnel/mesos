@@ -56,6 +56,8 @@
 #include "internal/devolve.hpp"
 #include "internal/evolve.hpp"
 
+#include "launcher/criteo_helpers.hpp"
+
 #include "logging/logging.hpp"
 
 using mesos::executor::Call;
@@ -147,7 +149,7 @@ public:
       const string& _sandboxDirectory,
       const string& _launcherDirectory,
       const Option<string>& _authorizationHeader)
-    : ProcessBase(process::ID::generate("default-executor")),
+    : ProcessBase(process::ID::generate("criteo-executor")),
       state(DISCONNECTED),
       contentType(ContentType::PROTOBUF),
       shuttingDown(false),
@@ -656,6 +658,7 @@ protected:
       vector<TaskID> taskIds_;
       foreach (const TaskInfo& task, taskGroup.tasks()) {
         taskIds_.push_back(task.task_id());
+        criteo::consul::registerTask(task);
       }
       return taskIds_;
     };
@@ -1003,6 +1006,7 @@ protected:
     }
 
     CHECK(containers.contains(taskId));
+    criteo::consul::deregisterTask(containers.get(taskId).get()->taskInfo);
     containers.erase(taskId);
 
     // Shutdown the executor if all the active child containers have terminated.
@@ -1087,6 +1091,8 @@ protected:
       Container* container,
       const Option<Duration>& _gracePeriod = None())
   {
+    criteo::consul::deregisterTask(container->taskInfo);
+
     if (!container->launched) {
       // We can get here if we're killing a task group for which multiple
       // containers failed to launch.
@@ -1237,6 +1243,8 @@ protected:
       const TaskID& taskId,
       const Option<KillPolicy>& killPolicy = None())
   {
+    criteo::consul::deregisterTask(containers.get(taskId).get()->taskInfo);
+
     if (shuttingDown) {
       LOG(WARNING) << "Ignoring kill for task '" << taskId
                    << "' since the executor is shutting down";
