@@ -1243,8 +1243,6 @@ protected:
       const TaskID& taskId,
       const Option<KillPolicy>& killPolicy = None())
   {
-    criteo::consul::deregisterTask(containers.get(taskId).get()->taskInfo);
-
     if (shuttingDown) {
       LOG(WARNING) << "Ignoring kill for task '" << taskId
                    << "' since the executor is shutting down";

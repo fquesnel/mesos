@@ -224,6 +224,8 @@ Option<string> deregisterTask(const TaskInfo& task)
   }
 
   for (const auto& service : services) {
+    if(service.empty()) continue;
+
     LOG(INFO) << "Deregister task " << task.name() << " under service "
               << service << " from consul";
 
