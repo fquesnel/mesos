@@ -552,22 +552,30 @@ void MemorySubsystemProcess::oomWaited(
     message << "\nMEMORY STATISTICS: \n" << read.get() << "\n";
   }
 
+  read = cgroups::read(hierarchy, cgroup, "memory.oom_control");
+
+  if (read.isError()) {
+    LOG(ERROR) << "Failed to read 'memory.oom_control': " << read.error();
+  } else {
+    message << "\nOOM CONTROL: \n" << read.get() << "\n";
+  }
+
   LOG(INFO) << strings::trim(message.str()); // Trim the extra '\n' at the end.
 
   // TODO(jieyu): This is not accurate if the memory resource is from
   // a non-star role or spans roles (e.g., "*" and "role"). Ideally,
   // we should save the resources passed in and report it here.
-  Resources mem = Resources::parse(
-      "mem",
-      stringify(usage.isSome()
-        ? (double) usage->bytes() / Bytes::MEGABYTES : 0),
-      "*").get();
+  /* Resources mem = Resources::parse( */
+  /*     "mem", */
+  /*     stringify(usage.isSome() */
+  /*       ? (double) usage->bytes() / Bytes::MEGABYTES : 0), */
+  /*     "*").get(); */
 
-  infos[containerId]->limitation.set(
-      protobuf::slave::createContainerLimitation(
-          mem,
-          message.str(),
-          TaskStatus::REASON_CONTAINER_LIMITATION_MEMORY));
+  /* infos[containerId]->limitation.set( */
+  /*     protobuf::slave::createContainerLimitation( */
+  /*         mem, */
+  /*         message.str(), */
+  /*         TaskStatus::REASON_CONTAINER_LIMITATION_MEMORY)); */
 }
 
 
