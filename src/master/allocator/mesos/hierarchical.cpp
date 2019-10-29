@@ -1960,7 +1960,7 @@ void HierarchicalAllocatorProcess::__allocate()
         // If the framework filters these resources, ignore.
         if (!allocatable(toAllocate, role, framework) ||
             isFiltered(frameworkId, role, slaveId, toAllocate)) {
-          VLOG(2) << "TOTO 1963 " + role + " filters these resources " << slaveId << " filtered: " << isFiltered(frameworkId, role, slaveId, toAllocate) << " , allocatable: " << allocatable(toAllocate, role, framework);
+          VLOG(2) << "TOTO 1963 " + role + " filters these resources " << slaveId;
           continue;
         }
 
@@ -2476,7 +2476,7 @@ bool HierarchicalAllocatorProcess::allocatable(
       if (role == "demo") {
           foreach (const ResourceQuantities& cur, *_minAllocatableResources) {
               if (!resources.contains(cur)) {
-                      VLOG(2) << "TOTO 2477 for demo, offer does not contain minimal requirements for: " << cur;
+                      VLOG(2) << "TOTO 2477 for demo, offer does not contain minimal requirements for: " << cur << " (offer was: " << resources << ")";
               }
           }
       }
