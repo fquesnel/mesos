@@ -1720,6 +1720,9 @@ void HierarchicalAllocatorProcess::__allocate()
       }
     }
   }
+  foreachkey(const string& role, quotaGuarantees) {
+      VLOG(2) << "[TOTO] 1724 " + role + ": " << rolesConsumedQuota[role];
+  }
 
   // We need to constantly make sure that we are holding back enough
   // unreserved resources that the remaining quota guarantee can later
@@ -1831,6 +1834,7 @@ void HierarchicalAllocatorProcess::__allocate()
       // If there are no active frameworks in this role, we do not
       // need to do any allocations for this role.
       if (!roles.contains(role)) {
+        VLOG(2) << "TOTO 1837 " + role + " is not in 'roles' (no active framework)";
         continue;
       }
 
@@ -1853,6 +1857,7 @@ void HierarchicalAllocatorProcess::__allocate()
         available -= offeredSharedResources.get(slaveId).getOrElse(Resources());
 
         if (available.allocatableTo(role).empty()) {
+          VLOG(2) << "TOTO 1860 " + role + " nothing left for the role on " << slaveId;
           break; // Nothing left for the role.
         }
 
@@ -1924,6 +1929,7 @@ void HierarchicalAllocatorProcess::__allocate()
         // a reservation. Otherwise, this role is not going to get any
         // allocation. We can safely `continue` here.
         if (toAllocate.empty()) {
+          VLOG(2) << "TOTO 1932 " + role + " has neither reserved resources and there is no unreserved resources on that slave " << slaveId;
           continue;
         }
 
@@ -1954,6 +1960,7 @@ void HierarchicalAllocatorProcess::__allocate()
         // If the framework filters these resources, ignore.
         if (!allocatable(toAllocate, role, framework) ||
             isFiltered(frameworkId, role, slaveId, toAllocate)) {
+          VLOG(2) << "TOTO 1963 " + role + " filters there resources " << slaveId;
           continue;
         }
 
@@ -2025,6 +2032,7 @@ void HierarchicalAllocatorProcess::__allocate()
       // In the second allocation stage, we only allocate
       // for non-quota roles.
       if (quotaGuarantees.contains(role)) {
+        VLOG(2) << "TOTO 2035 " + role + " has quota, ignoring (but this is normal) " << slaveId;
         continue;
       }
 
