@@ -2475,8 +2475,8 @@ bool HierarchicalAllocatorProcess::allocatable(
   }
       if (role == "demo") {
           foreach (const ResourceQuantities& cur, *_minAllocatableResources) {
-              if (resources.contains(cur)) {
-                      VLOG(2) << "TOTO 2477 for demo, offer contains minimal requirements: " << cur;
+              if (!resources.contains(cur)) {
+                      VLOG(2) << "TOTO 2477 for demo, offer does not contain minimal requirements for: " << cur;
               }
           }
       }
