@@ -2442,6 +2442,9 @@ bool HierarchicalAllocatorProcess::allocatable(
     const Framework& framework) const
 {
   if (resources.empty()) {
+      if (role == "demo") {
+          VLOG(2) << "2446 Resource offer for demo is empty, returning false";
+      }
     return false;
   }
 
@@ -2455,6 +2458,8 @@ bool HierarchicalAllocatorProcess::allocatable(
       ? &options.minAllocatableResources.get()
       : nullptr;
 
+
+
   if (framework.minAllocatableResources.contains(role)) {
     _minAllocatableResources = &framework.minAllocatableResources.at(role);
   }
@@ -2463,8 +2468,17 @@ bool HierarchicalAllocatorProcess::allocatable(
   // configured any resource is allocatable.
   if (_minAllocatableResources == nullptr ||
       _minAllocatableResources->empty()) {
+      if (role == "demo") {
+          VLOG(2) << "2446 No min allocatable resource, returning true";
+      }
     return true;
   }
+      if (role == "demo") {
+          VLOG(2) << "2446 for demo, offer contains minimal requirements: " << std::any_of(
+                  _minAllocatableResources->begin(),
+                  _minAllocatableResources->end(),
+                  [&](const ResourceQuantities& qs) { return resources.contains(qs); });
+      }
 
   return std::any_of(
       _minAllocatableResources->begin(),
