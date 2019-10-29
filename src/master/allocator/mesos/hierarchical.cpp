@@ -1960,7 +1960,7 @@ void HierarchicalAllocatorProcess::__allocate()
         // If the framework filters these resources, ignore.
         if (!allocatable(toAllocate, role, framework) ||
             isFiltered(frameworkId, role, slaveId, toAllocate)) {
-          VLOG(2) << "TOTO 1963 " + role + " filters there resources " << slaveId;
+          VLOG(2) << "TOTO 1963 " + role + " filters these resources " << slaveId << " filtered: " << isFiltered(frameworkId, role, slaveId, toAllocate) << " , allocatable: " << allocatable(toAllocate, role, framework);
           continue;
         }
 
