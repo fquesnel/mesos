@@ -2443,7 +2443,7 @@ bool HierarchicalAllocatorProcess::allocatable(
 {
   if (resources.empty()) {
       if (role == "demo") {
-          VLOG(2) << "2446 Resource offer for demo is empty, returning false";
+          VLOG(2) << "TOTO 2446 Resource offer for demo is empty, returning false";
       }
     return false;
   }
@@ -2469,15 +2469,16 @@ bool HierarchicalAllocatorProcess::allocatable(
   if (_minAllocatableResources == nullptr ||
       _minAllocatableResources->empty()) {
       if (role == "demo") {
-          VLOG(2) << "2446 No min allocatable resource, returning true";
+          VLOG(2) << "TOTO 2472 No min allocatable resource, returning true";
       }
     return true;
   }
       if (role == "demo") {
-          VLOG(2) << "2446 for demo, offer contains minimal requirements: " << std::any_of(
-                  _minAllocatableResources->begin(),
-                  _minAllocatableResources->end(),
-                  [&](const ResourceQuantities& qs) { return resources.contains(qs); });
+          foreach (const ResourceQuantities& cur, *_minAllocatableResources) {
+              if (resources.contains(cur)) {
+                      VLOG(2) << "TOTO 2477 for demo, offer contains minimal requirements: " << cur;
+              }
+          }
       }
 
   return std::any_of(
