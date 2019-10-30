@@ -1826,6 +1826,10 @@ void HierarchicalAllocatorProcess::__allocate()
     CHECK(slaves.contains(slaveId));
     Slave& slave = slaves.at(slaveId);
 
+    VLOG(2) << "TOTO 1829 Here is the list of roles in their order: ";
+    foreach (const string& role, quotaRoleSorter->sort()) {
+        VLOG(2) << "TOTO 1829 " << role;
+    }
     foreach (const string& role, quotaRoleSorter->sort()) {
       CHECK(quotaGuarantees.contains(role));
 
