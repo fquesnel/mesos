@@ -1826,7 +1826,7 @@ void HierarchicalAllocatorProcess::__allocate()
     CHECK(slaves.contains(slaveId));
     Slave& slave = slaves.at(slaveId);
 
-    VLOG(2) << "TOTO 1829 Here is the list of roles in their order: ";
+    VLOG(2) << "TOTO 1829 Here is the list of roles in order for slave " << slaveId;
     foreach (const string& role, quotaRoleSorter->sort()) {
         VLOG(2) << "TOTO 1829 " << role;
     }
@@ -1845,8 +1845,10 @@ void HierarchicalAllocatorProcess::__allocate()
       // TODO(bmahler): Handle shared volumes, which are always available but
       // should be excluded here based on `offeredSharedResources`.
       if (slave.getAvailable().empty()) {
+        VLOG(2) << "TOTO 1848 " << slaveId << " has no resource anymore, skipping";
         break; // Nothing left on this agent.
       }
+      VLOG(2) << "TOTO 1851 " << slaveId << " has resources";
 
       // Fetch frameworks according to their fair share.
       // NOTE: Suppressed frameworks are not included in the sort.
@@ -1855,6 +1857,7 @@ void HierarchicalAllocatorProcess::__allocate()
 
       foreach (const string& frameworkId_, frameworkSorter->sort()) {
         Resources available = slave.getAvailable();
+        VLOG(2) << "TOTO 1860 On slave " << slaveId << " here are available resources: " << available;
 
         // Offer a shared resource only if it has not been offered in this
         // offer cycle to a framework.
@@ -1918,6 +1921,8 @@ void HierarchicalAllocatorProcess::__allocate()
         ResourceQuantities unsatisfiedQuotaGuarantee =
           quotaGuarantee -
           rolesConsumedQuota.get(role).getOrElse(ResourceQuantities());
+
+        VLOG(2) << "TOTO 1925 " << role << " has following unsatisfied guarantees " << unsatisfiedQuotaGuarantee;
 
         Resources unreserved = available.nonRevocable().unreserved();
 
