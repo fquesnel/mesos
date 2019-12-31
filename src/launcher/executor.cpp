@@ -76,6 +76,7 @@
 #include "common/parse.hpp"
 #include "common/protobuf_utils.hpp"
 #include "common/status_utils.hpp"
+#include "common/temporary_file.hpp"
 
 #include "executor/v0_v1executor.hpp"
 
@@ -121,58 +122,10 @@ using mesos::v1::executor::Mesos;
 using mesos::v1::executor::MesosBase;
 using mesos::v1::executor::V0ToV1Adapter;
 
+using mesos::criteo::TemporaryFile;
+
 namespace mesos {
 namespace internal {
-
-/*
- * Represent a temporary file that can be either written or read from.
- */
-class TemporaryFile {
- public:
-  TemporaryFile() {
-    char filepath[] = "/tmp/criteo-mesos-XXXXXX";
-    int fd = mkstemp(filepath);
-    if (fd == -1)
-      throw std::runtime_error(
-          "Unable to create temporary file to run commands");
-    close(fd);
-    m_filepath = std::string(filepath);
-  }
-
-  /*
-   * Read whole content of the temporary file.
-   * @return The content of the file.
-   */
-  std::string readAll() const {
-    std::ifstream ifs(m_filepath);
-    std::string content((std::istreambuf_iterator<char>(ifs)),
-                        (std::istreambuf_iterator<char>()));
-    ifs.close();
-    return content;
-  }
-
-  /*
-   * Write content to the temporary file and flush it.
-   * @param content The content to write to the file.
-   */
-  void write(const std::string& content) const {
-    std::ofstream ofs;
-    ofs.open(m_filepath);
-    ofs << content;
-    std::flush(ofs);
-    ofs.close();
-  }
-
-  inline const std::string& filepath() const { return m_filepath; }
-
-  friend std::ostream& operator<<(std::ostream& out, const TemporaryFile& temp_file) {
-    out << temp_file.m_filepath;
-    return out;
-  }
-
- private:
-  std::string m_filepath;
-};
 
 class CommandExecutor: public ProtobufProcess<CommandExecutor>
 {
