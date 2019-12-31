@@ -124,6 +124,56 @@ using mesos::v1::executor::V0ToV1Adapter;
 namespace mesos {
 namespace internal {
 
+/*
+ * Represent a temporary file that can be either written or read from.
+ */
+class TemporaryFile {
+ public:
+  TemporaryFile() {
+    char filepath[] = "/tmp/criteo-mesos-XXXXXX";
+    int fd = mkstemp(filepath);
+    if (fd == -1)
+      throw std::runtime_error(
+          "Unable to create temporary file to run commands");
+    close(fd);
+    m_filepath = std::string(filepath);
+  }
+
+  /*
+   * Read whole content of the temporary file.
+   * @return The content of the file.
+   */
+  std::string readAll() const {
+    std::ifstream ifs(m_filepath);
+    std::string content((std::istreambuf_iterator<char>(ifs)),
+                        (std::istreambuf_iterator<char>()));
+    ifs.close();
+    return content;
+  }
+
+  /*
+   * Write content to the temporary file and flush it.
+   * @param content The content to write to the file.
+   */
+  void write(const std::string& content) const {
+    std::ofstream ofs;
+    ofs.open(m_filepath);
+    ofs << content;
+    std::flush(ofs);
+    ofs.close();
+  }
+
+  inline const std::string& filepath() const { return m_filepath; }
+
+  friend std::ostream& operator<<(std::ostream& out, const TemporaryFile& temp_file) {
+    out << temp_file.m_filepath;
+    return out;
+  }
+
+ private:
+  std::string m_filepath;
+};
+
 class CommandExecutor: public ProtobufProcess<CommandExecutor>
 {
 public:
@@ -142,7 +192,8 @@ public:
       const Option<vector<gid_t>> _taskSupplementaryGroups,
       const FrameworkID& _frameworkId,
       const ExecutorID& _executorId,
-      const Duration& _shutdownGracePeriod)
+      const Duration& _shutdownGracePeriod,
+      const Option<string>& _executorHook)
     : ProcessBase(process::ID::generate("command-executor")),
       state(DISCONNECTED),
       taskData(None()),
@@ -165,6 +216,7 @@ public:
       effectiveCapabilities(_effectiveCapabilities),
       boundingCapabilities(_boundingCapabilities),
       ttySlavePath(_ttySlavePath),
+      executorHook(_executorHook),
       taskLaunchInfo(_taskLaunchInfo),
       taskSupplementaryGroups(_taskSupplementaryGroups),
       frameworkId(_frameworkId),
@@ -425,7 +477,8 @@ protected:
       const Option<CapabilityInfo>& boundingCapabilities,
       const Option<string>& ttySlavePath,
       const Option<ContainerLaunchInfo>& taskLaunchInfo,
-      const Option<vector<gid_t>>& taskSupplementaryGroups)
+      const Option<vector<gid_t>>& taskSupplementaryGroups,
+      const Option<string>& hook)
   {
     // Prepare the flags to pass to the launch process.
     slave::MesosContainerizerLaunch::Flags launchFlags;
@@ -542,6 +595,14 @@ protected:
     vector<process::Subprocess::ChildHook> childHooks;
     if (ttySlavePath.isNone()) {
       childHooks.emplace_back(Subprocess::ChildHook::SETSID());
+    }
+
+    if(!hook.isNone()) {
+      TemporaryFile inputFile;
+      JSON::Object inputsJson;
+      inputsJson.values["launch_info"] = JSON::protobuf(launchInfo);
+      inputFile.write(stringify(inputsJson));
+      parentHooks.emplace_back(Subprocess::ParentHook::EXEC(hook.get(), inputFile.filepath()));
     }
 
     Try<Subprocess> s = subprocess(
@@ -721,7 +782,8 @@ protected:
         boundingCapabilities,
         ttySlavePath,
         taskLaunchInfo,
-        taskSupplementaryGroups);
+        taskSupplementaryGroups,
+        executorHook);
 
     LOG(INFO) << "Forked command at " << pid.get();
 
@@ -1252,6 +1314,7 @@ private:
   Option<CapabilityInfo> effectiveCapabilities;
   Option<CapabilityInfo> boundingCapabilities;
   Option<string> ttySlavePath;
+  Option<string> executorHook;
   Option<ContainerLaunchInfo> taskLaunchInfo;
   Option<vector<gid_t>> taskSupplementaryGroups;
   const FrameworkID frameworkId;
@@ -1409,6 +1472,8 @@ int main(int argc, char** argv)
     shutdownGracePeriod = parse.get();
   }
 
+  Option<string> executor_hook = os::getenv("MESOS_EXECUTOR_HOOK");
+
   Option<ContainerLaunchInfo> task_launch_info;
   if (flags.task_launch_info.isSome()) {
     Try<ContainerLaunchInfo> parse =
@@ -1440,7 +1505,8 @@ int main(int argc, char** argv)
           flags.task_supplementary_groups,
           frameworkId,
           executorId,
-          shutdownGracePeriod));
+          shutdownGracePeriod,
+          executor_hook));
 
   process::spawn(executor.get());
   process::wait(executor.get());
