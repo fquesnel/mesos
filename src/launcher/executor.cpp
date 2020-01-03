@@ -122,7 +122,7 @@ using mesos::v1::executor::Mesos;
 using mesos::v1::executor::MesosBase;
 using mesos::v1::executor::V0ToV1Adapter;
 
-using mesos::criteo::TemporaryFile;
+using mesos::internal::TemporaryFile;
 
 namespace mesos {
 namespace internal {
@@ -550,7 +550,7 @@ protected:
       childHooks.emplace_back(Subprocess::ChildHook::SETSID());
     }
 
-    if(!hook.isNone()) {
+    if(hook.isSome()) {
       TemporaryFile inputFile;
       JSON::Object inputsJson;
       inputsJson.values["launch_info"] = JSON::protobuf(launchInfo);

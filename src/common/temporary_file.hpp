@@ -6,7 +6,7 @@
 #include <string>
 
 namespace mesos {
-namespace criteo {
+namespace internal {
 
 /*
  * Represent a temporary file that can be either written or read from.

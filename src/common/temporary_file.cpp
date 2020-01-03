@@ -2,19 +2,18 @@
 #include <cerrno>
 
 namespace mesos {
-namespace criteo {
+namespace internal {
 
 /*
  * Represent a temporary file that can be either written or read from.
  */
 TemporaryFile::TemporaryFile() {
-  char filepath[] = "/tmp/criteo-mesos-XXXXXX";
-  int fd = mkstemp(filepath);
-  if (fd == -1)
+  Try<string> filepath = os::mktemp();
+  if(filepath.isError()){
     throw std::runtime_error(
       "Unable to create temporary file to run commands : " + std::strerror(errno));
-  close(fd);
-  m_filepath = std::string(filepath);
+  }
+  m_filepath = filepath.get()
 }
 
 /*
