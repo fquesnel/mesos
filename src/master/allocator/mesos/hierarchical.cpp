@@ -578,7 +578,7 @@ void HierarchicalAllocatorProcess::addSlave(
 
   // See comment at `quotaRoleSorter` declaration regarding non-revocable.
   quotaRoleSorter->add(slaveId, total.nonRevocable());
-
+  slaveSorter->add(slaveId, total);
   foreachpair (const FrameworkID& frameworkId,
                const Resources& allocation,
                used) {
@@ -650,6 +650,7 @@ void HierarchicalAllocatorProcess::removeSlave(
   // See comment at `quotaRoleSorter` declaration regarding non-revocable.
   quotaRoleSorter->remove(
       slaveId, slaves.at(slaveId).getTotal().nonRevocable());
+  slaveSorter->remove(slaveId, slaves.at(slaveId).getTotal());
 
   untrackReservations(slaves.at(slaveId).getTotal().reservations());
 
@@ -1623,11 +1624,7 @@ void HierarchicalAllocatorProcess::__allocate()
     }
   }
 
-  // Randomize the order in which slaves' resources are allocated.
-  //
-  // TODO(vinod): Implement a smarter sorting algorithm.
-  std::random_shuffle(slaveIds.begin(), slaveIds.end());
-
+  slaveSorter->sort(slaveIds.begin(), slaveIds.end());
   // Returns the result of shrinking the provided resources down to the
   // target resource quantities.
   //
@@ -2830,6 +2827,7 @@ void HierarchicalAllocatorProcess::trackAllocatedResources(
       quotaRoleSorter->allocated(role, slaveId, allocation.nonRevocable());
     }
   }
+  slaveSorter->allocated(slaveId, allocated);
 }
 
 
@@ -2865,6 +2863,7 @@ void HierarchicalAllocatorProcess::untrackAllocatedResources(
       quotaRoleSorter->unallocated(role, slaveId, allocation.nonRevocable());
     }
   }
+  slaveSorter->unallocated(slaveId, allocated);
 }
 
 

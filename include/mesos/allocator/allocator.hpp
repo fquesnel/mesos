@@ -98,6 +98,13 @@ public:
       const std::string& roleSorter,
       const std::string& frameworkSorter);
 
+
+  static Try<Allocator*> create(
+      const std::string& name,
+      const std::string& roleSorter,
+      const std::string& frameworkSorter,
+      const std::string& slaveSorter);
+
   Allocator() {}
 
   virtual ~Allocator() {}

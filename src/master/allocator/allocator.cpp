@@ -29,13 +29,26 @@ using std::string;
 using mesos::internal::master::allocator::HierarchicalDRFAllocator;
 using mesos::internal::master::allocator::HierarchicalRandomAllocator;
 
+
+
+using mesos::internal::master::allocator::HierarchicalDRFRandomSortedSlavesAllocator;
+using mesos::internal::master::allocator::HierarchicalDRFResourceSortedSlavesAllocator;
+using mesos::internal::master::allocator::HierarchicalDRFLexicographicSortedSlavesAllocator;
+
+using mesos::internal::master::allocator::HierarchicalRandomResourceSortedSlavesAllocator;
+using mesos::internal::master::allocator::HierarchicalRandomLexicographicSortedSlavesAllocator;
+using mesos::internal::master::allocator::HierarchicalRandomRandomSortedSlavesAllocator;
+
 namespace mesos {
 namespace allocator {
+
+const std::string defaultSlaveSorter = "random";
 
 Try<Allocator*> Allocator::create(
     const string& name,
     const string& roleSorter,
-    const string& frameworkSorter)
+    const string& frameworkSorter,
+    const string& slaveSorter)
 {
   // Create an instance of the default allocator. If other than the
   // default allocator is requested, search for it in loaded modules.
@@ -45,22 +58,42 @@ Try<Allocator*> Allocator::create(
   //
   // We also look for "HierarchicalDRF" since that was the
   // previous value for `DEFAULT_ALLOCATOR`.
-  if (name == "HierarchicalDRF" ||
-      name == mesos::internal::master::DEFAULT_ALLOCATOR) {
-    if (roleSorter == "drf" && frameworkSorter == "drf") {
-      return HierarchicalDRFAllocator::create();
+  if (name == "HierarchicalDRF" || name == mesos::internal::master::DEFAULT_ALLOCATOR) {
+    if (roleSorter != frameworkSorter) {
+      return Error("Unsupported combination of 'role_sorter' and 'framework_sorter': must be equal (for now)");
     }
-
-    if (roleSorter == "random" && frameworkSorter == "random") {
-      return HierarchicalRandomAllocator::create();
+    if (roleSorter == "drf") {
+      if (slaveSorter == "random")
+        return HierarchicalDRFRandomSortedSlavesAllocator::create();
+      if (slaveSorter == "resource")
+        return HierarchicalDRFResourceSortedSlavesAllocator::create();
+      if (slaveSorter == "lexicographic")
+        return HierarchicalDRFLexicographicSortedSlavesAllocator::create();
+       return Error("Unsupported combination of 'role_sorter' and 'slave_Sorter'.");
     }
-
-    return Error("Unsupported combination of 'role_sorter'"
-                 " and 'framework_sorter': must be equal (for now)");
+    if (roleSorter == "random") {
+      if (slaveSorter == "random")
+        return HierarchicalRandomRandomSortedSlavesAllocator::create();
+      if (slaveSorter == "resource")
+        return HierarchicalRandomResourceSortedSlavesAllocator::create();
+      if (slaveSorter == "lexicographic")
+        return HierarchicalRandomLexicographicSortedSlavesAllocator::create();
+       return Error("Unsupported combination of 'role_sorter' and 'slave_Sorter'.");
+    }
+    return Error("Unsupported 'role_sorter'.");
   }
 
   return modules::ModuleManager::create<Allocator>(name);
 }
 
+
+Try<Allocator*> Allocator::create(
+    const string& name,
+    const string& roleSorter,
+    const string& frameworkSorter)
+{
+
+  return Allocator::create(name, roleSorter, frameworkSorter, defaultSlaveSorter);
+}
 } // namespace allocator {
 } // namespace mesos {

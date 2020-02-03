@@ -42,6 +42,10 @@
 #include "master/allocator/sorter/drf/sorter.hpp"
 #include "master/allocator/sorter/random/sorter.hpp"
 
+#include "master/allocator/slavesorter/random/slavesorter.hpp"
+#include "master/allocator/slavesorter/resource/slavesorter.hpp"
+#include "master/allocator/slavesorter/lexicographic/slavesorter.hpp"
+
 #include "master/constants.hpp"
 
 namespace mesos {
@@ -54,20 +58,40 @@ namespace allocator {
 template <
     typename RoleSorter,
     typename FrameworkSorter,
-    typename QuotaRoleSorter>
+    typename QuotaRoleSorter,
+    typename SlaveSorter>
 class HierarchicalAllocatorProcess;
 
-typedef HierarchicalAllocatorProcess<DRFSorter, DRFSorter, DRFSorter>
-HierarchicalDRFAllocatorProcess;
+typedef HierarchicalAllocatorProcess<DRFSorter, DRFSorter, DRFSorter, RandomSlaveSorter> HierarchicalDRFRandomSortedSlavesAllocatorProcess;
+typedef MesosAllocator<HierarchicalDRFRandomSortedSlavesAllocatorProcess> HierarchicalDRFRandomSortedSlavesAllocator;
 
-typedef MesosAllocator<HierarchicalDRFAllocatorProcess>
-HierarchicalDRFAllocator;
 
-typedef HierarchicalAllocatorProcess<RandomSorter, RandomSorter, RandomSorter>
-HierarchicalRandomAllocatorProcess;
+typedef HierarchicalAllocatorProcess<DRFSorter, DRFSorter, DRFSorter, ResourceSlaveSorter> HierarchicalDRFResourceSortedSlavesAllocatorProcess;
+typedef MesosAllocator<HierarchicalDRFResourceSortedSlavesAllocatorProcess> HierarchicalDRFResourceSortedSlavesAllocator;
 
-typedef MesosAllocator<HierarchicalRandomAllocatorProcess>
-HierarchicalRandomAllocator;
+
+typedef HierarchicalAllocatorProcess<DRFSorter, DRFSorter, DRFSorter, LexicographicSlaveSorter> HierarchicalDRFLexicographicSortedSlavesAllocatorProcess;
+typedef MesosAllocator<HierarchicalDRFLexicographicSortedSlavesAllocatorProcess> HierarchicalDRFLexicographicSortedSlavesAllocator;
+
+
+
+typedef HierarchicalAllocatorProcess<RandomSorter, RandomSorter, RandomSorter, ResourceSlaveSorter> HierarchicalRandomResourceSortedSlavesAllocatorProcess;
+typedef MesosAllocator<HierarchicalRandomResourceSortedSlavesAllocatorProcess> HierarchicalRandomResourceSortedSlavesAllocator;
+
+
+typedef HierarchicalAllocatorProcess<RandomSorter, RandomSorter, RandomSorter, LexicographicSlaveSorter> HierarchicalRandomLexicographicSortedSlavesAllocatorProcess;
+typedef MesosAllocator<HierarchicalRandomLexicographicSortedSlavesAllocatorProcess> HierarchicalRandomLexicographicSortedSlavesAllocator;
+
+
+typedef HierarchicalAllocatorProcess<RandomSorter, RandomSorter, RandomSorter, RandomSlaveSorter> HierarchicalRandomRandomSortedSlavesAllocatorProcess;
+typedef MesosAllocator<HierarchicalRandomRandomSortedSlavesAllocatorProcess> HierarchicalRandomRandomSortedSlavesAllocator;
+
+
+typedef HierarchicalDRFRandomSortedSlavesAllocatorProcess HierarchicalDRFAllocatorProcess;
+typedef HierarchicalDRFRandomSortedSlavesAllocator HierarchicalDRFAllocator;
+
+typedef HierarchicalRandomRandomSortedSlavesAllocatorProcess HierarchicalRandomAllocatorProcess;
+typedef HierarchicalRandomRandomSortedSlavesAllocator HierarchicalRandomAllocator;
 
 
 namespace internal {
@@ -276,14 +300,18 @@ public:
   HierarchicalAllocatorProcess(
       const std::function<Sorter*()>& roleSorterFactory,
       const std::function<Sorter*()>& _frameworkSorterFactory,
-      const std::function<Sorter*()>& quotaRoleSorterFactory)
+      const std::function<Sorter*()>& quotaRoleSorterFactory,
+      const std::function<SlaveSorter*()>& slaveSorterFactory
+      )
     : initialized(false),
       paused(true),
       metrics(*this),
       completedFrameworkMetrics(0),
       roleSorter(roleSorterFactory()),
       quotaRoleSorter(quotaRoleSorterFactory()),
-      frameworkSorterFactory(_frameworkSorterFactory) {}
+      frameworkSorterFactory(_frameworkSorterFactory),
+      slaveSorter(slaveSorterFactory())
+       {}
 
   ~HierarchicalAllocatorProcess() override {}
 
@@ -632,8 +660,12 @@ protected:
   // the resource pool for each role specific framework sorter.
   hashmap<std::string, process::Owned<Sorter>> frameworkSorters;
 
+
   // Factory function for framework sorters.
   const std::function<Sorter*()> frameworkSorterFactory;
+  
+  //TODO(ojabnoune) DOC
+  process::Owned<SlaveSorter> slaveSorter;
 
 private:
   bool isFrameworkTrackedUnderRole(
@@ -733,7 +765,8 @@ private:
 template <
     typename RoleSorter,
     typename FrameworkSorter,
-    typename QuotaRoleSorter>
+    typename QuotaRoleSorter,
+    typename SlaveSorter>
 class HierarchicalAllocatorProcess
   : public internal::HierarchicalAllocatorProcess
 {
@@ -744,8 +777,9 @@ public:
           [this]() -> Sorter* {
             return new RoleSorter(this->self(), "allocator/mesos/roles/");
           },
-          []() -> Sorter* { return new FrameworkSorter(); },
-          []() -> Sorter* { return new QuotaRoleSorter(); }) {}
+          []() -> Sorter * { return new FrameworkSorter(); },
+          []() -> Sorter * { return new QuotaRoleSorter(); },
+          []() -> SlaveSorter * { return new SlaveSorter(); }) {}
 };
 
 } // namespace allocator {

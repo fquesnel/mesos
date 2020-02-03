@@ -190,6 +190,13 @@ mesos::internal::master::Flags::Flags()
       "frameworks. Options are the same as for `--user_sorter`.",
       "drf");
 
+
+  add(&Flags::slave_sorter,
+      "slave_sorter",
+      "Policy to use to sort slave during allocator allocation runs.\n"   
+      "May be one of: [resources, random, lexicographic].",
+      "resources");
+
   add(&Flags::allocation_interval,
       "allocation_interval",
       "Amount of time to wait between performing\n"

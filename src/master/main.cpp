@@ -333,7 +333,8 @@ int main(int argc, char** argv)
   Try<Allocator*> allocator = Allocator::create(
       flags.allocator,
       flags.role_sorter,
-      flags.framework_sorter);
+      flags.framework_sorter,
+      flags.slave_sorter);
 
   if (allocator.isError()) {
     EXIT(EXIT_FAILURE)
