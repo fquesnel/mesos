@@ -1134,8 +1134,10 @@ libmesos_no_3rdparty_la_SOURCES +=					\
   master/allocator/slavesorter/slavesorter.hpp					\
   master/allocator/slavesorter/random/slavesorter.hpp					\
   master/allocator/slavesorter/random/slavesorter.cpp					\
-  master/allocator/slavesorter/resource/slavesorter.hpp					\
-  master/allocator/slavesorter/resource/slavesorter.cpp					\
+  master/allocator/slavesorter/resources_weights/slavesorter.hpp					\
+  master/allocator/slavesorter/resources_weights/slavesorter.cpp					\
+  master/allocator/slavesorter/cpu_first/slavesorter.hpp					\
+  master/allocator/slavesorter/cpu_first/slavesorter.cpp					\
   master/allocator/slavesorter/lexicographic/slavesorter.hpp					\
   master/allocator/slavesorter/lexicographic/slavesorter.cpp					\
   master/constants.cpp							\

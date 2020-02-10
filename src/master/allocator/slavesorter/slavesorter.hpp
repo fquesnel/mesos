@@ -45,6 +45,10 @@ public:
 
   virtual ~SlaveSorter() = default;
 
+  // Initialize the sorter.
+  virtual void initialize(
+      const Option<std::string>& slaveSorterResourceWeights){};
+
 
   //   // Returns all of the slaves in the order that they should
   //   // be allocated to, according to this Sorter's policy.

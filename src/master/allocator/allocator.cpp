@@ -29,13 +29,13 @@ using std::string;
 using mesos::internal::master::allocator::HierarchicalDRFAllocator;
 using mesos::internal::master::allocator::HierarchicalRandomAllocator;
 
-
-
 using mesos::internal::master::allocator::HierarchicalDRFRandomSortedSlavesAllocator;
-using mesos::internal::master::allocator::HierarchicalDRFResourceSortedSlavesAllocator;
+using mesos::internal::master::allocator::HierarchicalDRFResourceSortedSlavesCPUFirstAllocator;
+using mesos::internal::master::allocator::HierarchicalDRFResourceWeightsSortedSlavesAllocator;
 using mesos::internal::master::allocator::HierarchicalDRFLexicographicSortedSlavesAllocator;
 
-using mesos::internal::master::allocator::HierarchicalRandomResourceSortedSlavesAllocator;
+using mesos::internal::master::allocator::HierarchicalRandomResourceSortedCPUFirstSlavesAllocator;
+using mesos::internal::master::allocator::HierarchicalRandomResourceSortedWeightsAllocator;
 using mesos::internal::master::allocator::HierarchicalRandomLexicographicSortedSlavesAllocator;
 using mesos::internal::master::allocator::HierarchicalRandomRandomSortedSlavesAllocator;
 
@@ -43,6 +43,7 @@ namespace mesos {
 namespace allocator {
 
 const std::string defaultSlaveSorter = "random";
+const std::string defaultResourceWeights = "cpus(10);mem(5);disk(1)";
 
 Try<Allocator*> Allocator::create(
     const string& name,
@@ -57,32 +58,38 @@ Try<Allocator*> Allocator::create(
   // ModuleManager and built-in allocator factory do that already.
   //
   // We also look for "HierarchicalDRF" since that was the
-  // previous value for `DEFAULT_ALLOCATOR`.
+  // previous value for `DEFAULT_ALLOCATOR`.  
   if (name == "HierarchicalDRF" || name == mesos::internal::master::DEFAULT_ALLOCATOR) {
     if (roleSorter != frameworkSorter) {
       return Error("Unsupported combination of 'role_sorter' and 'framework_sorter': must be equal (for now)");
     }
-    if (roleSorter == "drf") {
-      if (slaveSorter == "random")
-        return HierarchicalDRFRandomSortedSlavesAllocator::create();
-      if (slaveSorter == "resource")
-        return HierarchicalDRFResourceSortedSlavesAllocator::create();
-      if (slaveSorter == "lexicographic")
-        return HierarchicalDRFLexicographicSortedSlavesAllocator::create();
-       return Error("Unsupported combination of 'role_sorter' and 'slave_Sorter'.");
+    if (roleSorter == "drf") {      
+        if (slaveSorter == "cpu_first")        
+          return HierarchicalDRFResourceSortedSlavesCPUFirstAllocator::create();
+        if (slaveSorter == "resource_weights"){
+        // TODO(jabnouneo) : check if resource weights have been passed; forward to allocator
+          return HierarchicalDRFResourceWeightsSortedSlavesAllocator::create();
+        }
+        if (slaveSorter == "lexicographic")
+          return HierarchicalDRFLexicographicSortedSlavesAllocator::create();
+        if (slaveSorter == "random")
+          return HierarchicalDRFRandomSortedSlavesAllocator::create();
+
+       return Error("Unsupported combination of 'role_sorter' and 'slave_sorter'.");
     }
     if (roleSorter == "random") {
-      if (slaveSorter == "random")
-        return HierarchicalRandomRandomSortedSlavesAllocator::create();
-      if (slaveSorter == "resource")
-        return HierarchicalRandomResourceSortedSlavesAllocator::create();
-      if (slaveSorter == "lexicographic")
-        return HierarchicalRandomLexicographicSortedSlavesAllocator::create();
+        if (slaveSorter == "cpu_first")
+          return HierarchicalRandomResourceSortedCPUFirstSlavesAllocator::create();
+        if (slaveSorter == "resource_weights")
+          return HierarchicalRandomResourceSortedWeightsAllocator::create();
+        if (slaveSorter == "lexicographic")
+          return HierarchicalRandomLexicographicSortedSlavesAllocator::create();
+        if (slaveSorter == "random")
+          return HierarchicalRandomRandomSortedSlavesAllocator::create();
        return Error("Unsupported combination of 'role_sorter' and 'slave_Sorter'.");
     }
     return Error("Unsupported 'role_sorter'.");
   }
-
   return modules::ModuleManager::create<Allocator>(name);
 }
 

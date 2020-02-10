@@ -64,6 +64,7 @@ public:
   std::string framework_sorter;
   std::string slave_sorter;
   std::string slave_sorter_resource_weights; 
+  
   Duration allocation_interval;
   Option<std::string> cluster;
   Option<std::string> roles;

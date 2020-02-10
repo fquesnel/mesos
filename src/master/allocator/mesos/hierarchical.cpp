@@ -235,7 +235,7 @@ void HierarchicalAllocatorProcess::initialize(
   // necessary.
   roleSorter->initialize(options.fairnessExcludeResourceNames);
   quotaRoleSorter->initialize(options.fairnessExcludeResourceNames);
-
+  slaveSorter->initialize(options.slaveSorterResourceWeights);
   VLOG(1) << "Initialized hierarchical allocator process";
 
   // Start a loop to run allocation periodically.

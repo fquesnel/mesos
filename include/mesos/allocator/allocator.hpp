@@ -66,6 +66,8 @@ struct Options
   size_t maxCompletedFrameworks = 0;
 
   bool publishPerFrameworkMetrics = true;
+
+  Option<std::string> slaveSorterResourceWeights;
 };
 
 
