@@ -30,9 +30,8 @@
 #include <stout/hashmap.hpp>
 #include <stout/option.hpp>
 
-#include "common/resource_quantities.hpp"
+#include "mesos/resource_quantities.hpp"
 #include "master/allocator/slavesorter/slavesorter.hpp"
-#include "common/resource_quantities.hpp"
 
 namespace mesos {
 namespace internal {
