@@ -65,6 +65,8 @@ struct Options
   size_t maxCompletedFrameworks = 0;
 
   bool publishPerFrameworkMetrics = true;
+
+  Option<std::string> slaveSorterResourceWeights;
 };
 
 
@@ -96,6 +98,13 @@ public:
       const std::string& name,
       const std::string& roleSorter,
       const std::string& frameworkSorter);
+
+
+  static Try<Allocator*> create(
+      const std::string& name,
+      const std::string& roleSorter,
+      const std::string& frameworkSorter,
+      const std::string& slaveSorter);
 
   Allocator() {}
 
