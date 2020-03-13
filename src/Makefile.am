@@ -1127,6 +1127,15 @@ libmesos_no_3rdparty_la_SOURCES +=					\
   master/allocator/mesos/hierarchical.hpp				\
   master/allocator/mesos/metrics.cpp					\
   master/allocator/mesos/metrics.hpp					\
+  master/allocator/mesos/slavesorter/cpu_first/slavesorter.cpp		\
+  master/allocator/mesos/slavesorter/cpu_first/slavesorter.hpp		\
+  master/allocator/mesos/slavesorter/lexicographic/slavesorter.cpp	\
+  master/allocator/mesos/slavesorter/lexicographic/slavesorter.hpp	\
+  master/allocator/mesos/slavesorter/random/slavesorter.cpp		\
+  master/allocator/mesos/slavesorter/random/slavesorter.hpp		\
+  master/allocator/mesos/slavesorter/resources_weights/slavesorter.cpp	\
+  master/allocator/mesos/slavesorter/resources_weights/slavesorter.hpp	\
+  master/allocator/mesos/slavesorter/slavesorter.hpp			\
   master/allocator/mesos/sorter/drf/metrics.cpp				\
   master/allocator/mesos/sorter/drf/metrics.hpp				\
   master/allocator/mesos/sorter/drf/sorter.cpp				\

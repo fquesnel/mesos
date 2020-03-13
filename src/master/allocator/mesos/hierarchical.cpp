@@ -470,6 +470,7 @@ void HierarchicalAllocatorProcess::initialize(
         options.maxCompletedFrameworks);
 
   roleSorter->initialize(options.fairnessExcludeResourceNames);
+  slaveSorter->initialize(options.slaveSorterResourceWeights);
 
   VLOG(1) << "Initialized hierarchical allocator process";
 
@@ -809,6 +810,7 @@ void HierarchicalAllocatorProcess::addSlave(
     sorter->add(slaveId, total);
   }
 
+  slaveSorter->add(slaveId, slaveInfo, total);
   foreachpair (const FrameworkID& frameworkId,
                const Resources& allocation,
                used) {
@@ -878,6 +880,7 @@ void HierarchicalAllocatorProcess::removeSlave(
     foreachvalue (const Owned<Sorter>& sorter, frameworkSorters) {
       sorter->remove(slaveId, slave.getTotal());
     }
+    slaveSorter->remove(slaveId, slave.getTotal());
 
     roleTree.untrackReservations(slave.getTotal().reserved());
   }
@@ -1758,10 +1761,7 @@ void HierarchicalAllocatorProcess::__allocate()
     }
   }
 
-  // Randomize the order in which slaves' resources are allocated.
-  //
-  // TODO(vinod): Implement a smarter sorting algorithm.
-  std::random_shuffle(slaveIds.begin(), slaveIds.end());
+  slaveSorter->sort(slaveIds.begin(), slaveIds.end());
 
   // To enforce quota, we keep track of consumed quota for roles with a
   // non-default quota.
@@ -2970,6 +2970,7 @@ void HierarchicalAllocatorProcess::trackAllocatedResources(
     frameworkSorter->allocated(
         frameworkId.value(), slaveId, allocation);
   }
+  slaveSorter->allocated(slaveId, allocated);
 }
 
 
@@ -3003,6 +3004,7 @@ void HierarchicalAllocatorProcess::untrackAllocatedResources(
 
     roleSorter->unallocated(role, slaveId, allocation);
   }
+  slaveSorter->unallocated(slaveId, allocated);
 }
 
 
