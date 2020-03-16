@@ -193,7 +193,7 @@ mesos::internal::master::Flags::Flags()
 
   add(&Flags::slave_sorter,
       "slave_sorter",
-      "Policy to use to sort slaves during allocator allocation runs.\n"   
+      "Policy to use to sort slaves during allocator allocation runs.\n"
       "May be one of: [cpu_first, resource_weights, lexicographic, random].",
       "cpu_first");
 

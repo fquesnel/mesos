@@ -28,7 +28,7 @@ ResourceSlaveSorterCPUFirst::~ResourceSlaveSorterCPUFirst() {}
 bool ResourceSlaveSorterCPUFirst::_compare(SlaveID& l, SlaveID& r)
 {
  CHECK(total_.resources.contains(l));
- CHECK(total_.resources.contains(r)); 
+ CHECK(total_.resources.contains(r));
   const Resources &lres = total_.resources[l];
   const Resources &rres = total_.resources[r];
   if (lres.cpus().get() < rres.cpus().get()){

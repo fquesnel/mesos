@@ -65,40 +65,31 @@ class HierarchicalAllocatorProcess;
 typedef HierarchicalAllocatorProcess<DRFSorter, DRFSorter, RandomSlaveSorter> HierarchicalDRFRandomSortedSlavesAllocatorProcess;
 typedef MesosAllocator<HierarchicalDRFRandomSortedSlavesAllocatorProcess> HierarchicalDRFRandomSortedSlavesAllocator;
 
-
 typedef HierarchicalAllocatorProcess<DRFSorter, DRFSorter, ResourceSlaveSorterCPUFirst> HierarchicalDRFResourceSortedSlavesCPUFirstAllocatorProcess;
 typedef MesosAllocator<HierarchicalDRFResourceSortedSlavesCPUFirstAllocatorProcess> HierarchicalDRFResourceSortedSlavesCPUFirstAllocator;
 
-
 typedef HierarchicalAllocatorProcess<DRFSorter, DRFSorter, ResourcesWeightedSlaveSorter> HierarchicalDRFResourceWeightsSortedSlavesProcess;
 typedef MesosAllocator<HierarchicalDRFResourceWeightsSortedSlavesProcess> HierarchicalDRFResourceWeightsSortedSlavesAllocator;
-
 
 typedef HierarchicalAllocatorProcess<DRFSorter, DRFSorter, LexicographicSlaveSorter> HierarchicalDRFLexicographicSortedSlavesAllocatorProcess;
 typedef MesosAllocator<HierarchicalDRFLexicographicSortedSlavesAllocatorProcess> HierarchicalDRFLexicographicSortedSlavesAllocator;
 
 typedef HierarchicalAllocatorProcess<RandomSorter, RandomSorter, ResourceSlaveSorterCPUFirst> HierarchicalRandomResourceSortedCPUFirstSlavesAllocatorProcess;
-
 typedef MesosAllocator<HierarchicalRandomResourceSortedCPUFirstSlavesAllocatorProcess> HierarchicalRandomResourceSortedCPUFirstSlavesAllocator;
 
 typedef HierarchicalAllocatorProcess<RandomSorter, RandomSorter, ResourcesWeightedSlaveSorter> HierarchicalRandomResourceSortedWeightsAllocatorProcess;
-
 typedef MesosAllocator<HierarchicalRandomResourceSortedWeightsAllocatorProcess> HierarchicalRandomResourceSortedWeightsAllocator;
- 
-typedef HierarchicalAllocatorProcess<RandomSorter, RandomSorter, LexicographicSlaveSorter> HierarchicalRandomLexicographicSortedSlavesAllocatorProcess;
 
+typedef HierarchicalAllocatorProcess<RandomSorter, RandomSorter, LexicographicSlaveSorter> HierarchicalRandomLexicographicSortedSlavesAllocatorProcess;
 typedef MesosAllocator<HierarchicalRandomLexicographicSortedSlavesAllocatorProcess> HierarchicalRandomLexicographicSortedSlavesAllocator;
 
 typedef HierarchicalAllocatorProcess<RandomSorter, RandomSorter, RandomSlaveSorter> HierarchicalRandomRandomSortedSlavesAllocatorProcess;
-
 typedef MesosAllocator<HierarchicalRandomRandomSortedSlavesAllocatorProcess> HierarchicalRandomRandomSortedSlavesAllocator;
 
 typedef HierarchicalDRFRandomSortedSlavesAllocatorProcess HierarchicalDRFAllocatorProcess;
-
 typedef HierarchicalDRFRandomSortedSlavesAllocator HierarchicalDRFAllocator;
 
 typedef HierarchicalRandomRandomSortedSlavesAllocatorProcess HierarchicalRandomAllocatorProcess;
-
 typedef HierarchicalRandomRandomSortedSlavesAllocator HierarchicalRandomAllocator;
 
 namespace internal {
@@ -443,7 +434,8 @@ public:
   HierarchicalAllocatorProcess(
       const std::function<Sorter*()>& roleSorterFactory,
       const std::function<Sorter*()>& _frameworkSorterFactory,
-      const std::function<SlaveSorter*()>& slaveSorterFactory)
+      const std::function<SlaveSorter*()>& slaveSorterFactory
+      )
     : initialized(false),
       paused(true),
       metrics(*this),
@@ -756,10 +748,9 @@ protected:
   // the resource pool for each role specific framework sorter.
   hashmap<std::string, process::Owned<Sorter>> frameworkSorters;
 
-
   // Factory function for framework sorters.
   const std::function<Sorter*()> frameworkSorterFactory;
-  
+
   //TODO(ojabnoune) DOC
   process::Owned<SlaveSorter> slaveSorter;
 
@@ -853,7 +844,7 @@ public:
             return new RoleSorter(this->self(), "allocator/mesos/roles/");
           },
           []() -> Sorter* { return new FrameworkSorter(); },
-          []() -> SlaveSorter * { return new SlaveSorter(); }) {}
+          []() -> SlaveSorter* { return new SlaveSorter(); }) {}
 };
 
 } // namespace allocator {

@@ -786,7 +786,7 @@ void Master::initialize()
   options.maxCompletedFrameworks = flags.max_completed_frameworks;
   options.publishPerFrameworkMetrics = flags.publish_per_framework_metrics;
   options.slaveSorterResourceWeights = flags.slave_sorter_resource_weights;
-  
+
   // Initialize the allocator.
   allocator->initialize(
       options,

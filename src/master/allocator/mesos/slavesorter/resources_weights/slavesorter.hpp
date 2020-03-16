@@ -43,7 +43,7 @@ class ResourcesWeightedSlaveSorter : public SlaveSorter
 public:
   ResourcesWeightedSlaveSorter();
   virtual ~ResourcesWeightedSlaveSorter();
-  
+
   // Initialize the sorter.
   virtual void initialize(
       const Option<std::string>& slaveSorterResourceWeights);
@@ -125,7 +125,6 @@ private:
     // identities of resources and not quantities.
     Resources scalarQuantities;
   } total_;
-  
 
   double cpuWeight;
   double diskWeight;
