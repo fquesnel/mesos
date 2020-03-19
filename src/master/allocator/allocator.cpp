@@ -42,7 +42,7 @@ using mesos::internal::master::allocator::HierarchicalRandomRandomSortedSlavesAl
 namespace mesos {
 namespace allocator {
 
-const std::string defaultSlaveSorter = "random";
+const std::string defaultSlaveSorter = "cpu_first";
 const std::string defaultResourceWeights = "cpus(10);mem(5);disk(1)";
 
 Try<Allocator*> Allocator::create(
