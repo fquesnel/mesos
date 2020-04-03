@@ -2812,6 +2812,9 @@ void Slave::__run(
         CHECK(receivedResourceVersions.contains(None()));
 
         if (resourceVersion != receivedResourceVersions.at(None())) {
+          LOG(WARNING) << "Resource version mismatch; Offered: " << resourceVersion
+                       << "; Requested: " << receivedResourceVersions.at(None())
+
           kill = "Task assumes outdated resource state";
         }
       } else {
@@ -2821,6 +2824,14 @@ void Slave::__run(
         if (resourceProvider == nullptr ||
             resourceProvider->resourceVersion !=
               receivedResourceVersions.at(resourceProviderId.get())) {
+          if (resourceProvider == nullptr) {
+            LOG(WARNING) << "Could not find resource provider with id " << resourceProviderId.get()
+          } else {
+            LOG(WARNING) << "Resource version mismatch for resource provider " << resourceProviderId.get()
+                         << "; Offered: " << resourceProvider->resourceVersion
+                         << "; Requested: " << receivedResourceVersions.at(resourceProviderId.get())
+          }
+
           kill = "Task assumes outdated resource state";
         }
       }
